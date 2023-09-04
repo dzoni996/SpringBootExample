@@ -1,14 +1,15 @@
 package com.example.web_store.student;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -39,5 +40,19 @@ public class StudentService {
             throw new IllegalStateException("Student with id " + studentId + " not exists!");
         }
         studentRepository.deleteById(studentId);
+    }
+
+    @Transactional
+    public void updateStudent(Long id, String name, String email) {
+        Student st = studentRepository.findById(id).orElseThrow(
+                () -> new IllegalStateException("Student with id " + id + " not exists!")
+        );
+
+        if (name != null && !name.isEmpty() && !Objects.equals(st.getName(), name)){
+            st.setName(name);
+        }
+        if (email != null && !email.isEmpty() && !Objects.equals(st.getEmail(), email)){
+            st.setEmail(email);
+        }
     }
 }
